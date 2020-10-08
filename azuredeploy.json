@@ -30,7 +30,6 @@
           "connectionStrings": [
             {
               "name": "defaultConnection",
-#              "ConnectionString": "[concat('Database=', variables('databaseName'), ';Data Source=', reference(resourceId('Microsoft.DBforMySQL/servers',variables('serverName'))).fullyQualifiedDomainName,';User Id=',parameters('administratorLogin'),'@',variables('serverName') ,';Password=',parameters('administratorLoginPassword'))]",
               "type": "MySql"
             }
           ]
@@ -54,8 +53,8 @@
       "properties": {
         "createMode": "Default",
         "version": "5.7",
-        "administratorLogin": "[parameters('administratorLogin')]",
-        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "administratorLogin": "Login",
+        "administratorLoginPassword": "LoginPassword",
         "storageProfile": {
           "storageMB": "51200",
           "backupRetentionDays": 7,
