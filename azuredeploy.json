@@ -1,0 +1,96 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2020-06-01",
+      "name": "hostingplan",
+      "location": "East US",
+      "sku": {
+        "Tier": "Standard",
+        "Name": "S1"
+      },
+      "kind": "linux",
+      "properties": {
+        "name": "hostingPlan",
+        "workerSizeId": "1",
+        "reserved": true,
+        "numberOfWorkers": "1"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2020-06-01",
+      "name": "site",
+      "location": "East US",
+      "properties": {
+        "siteConfig": {
+          "linuxFxVersion": "php|7.0",
+          "connectionStrings": [
+            {
+              "name": "defaultConnection",
+#              "ConnectionString": "[concat('Database=', variables('databaseName'), ';Data Source=', reference(resourceId('Microsoft.DBforMySQL/servers',variables('serverName'))).fullyQualifiedDomainName,';User Id=',parameters('administratorLogin'),'@',variables('serverName') ,';Password=',parameters('administratorLoginPassword'))]",
+              "type": "MySql"
+            }
+          ]
+        },
+        "name": "site",
+        "serverFarmId": "hostingPlan"
+      }
+      },
+    {
+      "type": "Microsoft.DBforMySQL/servers",
+      "apiVersion": "2017-12-01",
+      "name": "server",
+      "location": "East US",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "tier": "GeneralPurpose",
+        "capacity": "2",
+        "size": "51200",
+        "family": "Gen5"
+      },
+      "properties": {
+        "createMode": "Default",
+        "version": "5.7",
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "storageProfile": {
+          "storageMB": "51200",
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        },
+        "sslEnforcement": "Disabled"
+      },
+      "resources": [
+        {
+          "type": "firewallrules",
+          "apiVersion": "2017-12-01",
+          "name": "AllowAzureIPs",
+          "location": "East US",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforMySQL/servers/databases')]",
+            "[resourceId('Microsoft.DBforMySQL/servers/')]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255"
+          }
+        },
+        {
+          "type": "databases",
+          "apiVersion": "2017-12-01",
+          "name": "databaseName",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforMySQL/servers/')]"
+          ],
+          "properties": {
+            "charset": "utf8",
+            "collation": "utf8_general_ci"
+          }
+        }
+      ]
+    }
+  ]
+}
