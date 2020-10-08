@@ -22,8 +22,11 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2020-06-01",
-      "name": "site",
+      "name": "sitea190",
       "location": "East US",
+      "dependsOn": [
+        "['hostingPlan']"
+      ],
       "properties": {
         "siteConfig": {
           "linuxFxVersion": "php|7.0",
@@ -34,14 +37,14 @@
             }
           ]
         },
-        "name": "site",
+        "name": "sitea190",
         "serverFarmId": "hostingPlan"
       }
       },
     {
       "type": "Microsoft.DBforMySQL/servers",
       "apiVersion": "2017-12-01",
-      "name": "server",
+      "name": "servera019",
       "location": "East US",
       "sku": {
         "name": "GP_Gen5_2",
@@ -54,7 +57,7 @@
         "createMode": "Default",
         "version": "5.7",
         "administratorLogin": "Login",
-        "administratorLoginPassword": "LoginPassword",
+        "administratorLoginPassword": "#Rahul_420",
         "storageProfile": {
           "storageMB": "51200",
           "backupRetentionDays": 7,
@@ -66,11 +69,10 @@
         {
           "type": "firewallrules",
           "apiVersion": "2017-12-01",
-          "name": "AllowAzureIPs",
+          "name": "IPs",
           "location": "East US",
           "dependsOn": [
-            "[resourceId('Microsoft.DBforMySQL/servers/databases')]",
-            "[resourceId('Microsoft.DBforMySQL/servers/')]"
+            "[resourceId('Microsoft.DBforMySQL/servers/', 'servera019')]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
@@ -82,7 +84,7 @@
           "apiVersion": "2017-12-01",
           "name": "databaseName",
           "dependsOn": [
-            "[resourceId('Microsoft.DBforMySQL/servers/')]"
+            "[resourceId('Microsoft.DBforMySQL/servers/', 'servera019')]"
           ],
           "properties": {
             "charset": "utf8",
